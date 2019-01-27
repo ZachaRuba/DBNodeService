@@ -82,7 +82,7 @@ function postemote(postdata){
 				console.log('statusCode:', res.statusCode);
 				console.log('headers:', res.headers);
 			});
-			var id = `{userid: ${userid}}`;
+			var id = "{'userId':" +  `'${userid}'}`;
 			//execute the request
 			req.write(postdata);
 			console.log(postdata);
