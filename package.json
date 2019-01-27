@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ZachaRuba/DBNodeService/issues"
   },
-  "homepage": "https://github.com/ZachaRuba/DBNodeService#readme"
+  "homepage": "https://github.com/ZachaRuba/DBNodeService#readme",
+  "dependencies": {
+    "node-webcam": "^0.4.6"
+  }
 }
