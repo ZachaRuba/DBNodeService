@@ -1,0 +1,19 @@
+{
+  "name": "dbnodeservice",
+  "version": "1.0.0",
+  "description": "Captures pictures of client and sends emotional levels to server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZachaRuba/DBNodeService.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZachaRuba/DBNodeService/issues"
+  },
+  "homepage": "https://github.com/ZachaRuba/DBNodeService#readme"
+}
