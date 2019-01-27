@@ -1,6 +1,7 @@
 
 require('dotenv').load();
 const https = require('https');
+const querystring = require('querystring');
 const fs = require('fs');
 const express = require('express');
 const webcam = require('node-webcam');
@@ -9,7 +10,8 @@ const webcam = require('node-webcam');
 const hostname = '127.0.0.1';
 const port = process.env.PORT || 3000;
 const apikey = process.env.APIKEY;
-const apiurl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize?";
+const apiurl = "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
+const userid = 12345
 
 var maincamconfig = {
 	width:          1280,
@@ -27,7 +29,7 @@ var maincam = webcam.create(maincamconfig);
 
 //API Code Below
 function postpic(postdata) {
-
+		var str = '';
 	//Determine where Post is going
 		var options = {
 				hostname: "canadacentral.api.cognitive.microsoft.com",
@@ -35,7 +37,7 @@ function postpic(postdata) {
 				method: "POST",
 				followRedirect: true,
 				headers:{
-					"Content-Type": "application/json",
+					"Content-Type": "application/octet-stream",
 					"Ocp-Apim-Subscription-Key": apikey
 				}
 		};
@@ -45,8 +47,14 @@ function postpic(postdata) {
 		  console.log('headers:', res.headers);
 
 		  res.on('data', (d) => {
-		    process.stdout.write(d);
+		    //process.stdout.write(d);
+				str += d;
 		  });
+
+			res.on('end', (e) => {
+				postemote(str);
+				//console.log(str);
+			});
 		});
 
 		req.on('error', (e) => {
@@ -59,14 +67,42 @@ function postpic(postdata) {
 
 }
 
+function postemote(postdata){
+	var options = {
+			hostname: "nw-mood-server.herokuapp.com",
+			path: "/addEmotion",
+			method: "POST",
+			followRedirect: true,
+			headers:{
+				"Content-Type": "application/JSON",
+			}
+		}
+
+			var req = https.request(options, (res) =>{
+				console.log('statusCode:', res.statusCode);
+				console.log('headers:', res.headers);
+			});
+			var id = `{userid: ${userid}}`;
+			//execute the request
+			req.write(postdata);
+			console.log(postdata);
+			req.write(id);
+			console.log(id);
+			req.end();
+};
+
+
 function snap() {
-	var time = new Date();
 	maincam.capture("temp_picture", function(err, data){
 			if(err) {
 				console.log('ERROR!!!!');
 			}
-			var body = "{'url': 'https://www.biography.com/.image/t_share/MTE1ODA0OTcxNTkzNzk1MDg1/sean-connery-9255144-1-402.jpg'}";
-			postpic(body)
+		});
+		console.log('Hope we read your file ok.');
+		fs.readFile('temp_picture.jpg', (err, data) => {
+  		if (err) throw err;
+			console.log(data);
+  		postpic(data);
 		});
 	console.log('Just snapped your photo!');
 }
