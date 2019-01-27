@@ -1,6 +1,7 @@
 
 require('dotenv').load();
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const webcam = require('node-webcam');
 
@@ -23,26 +24,56 @@ var maincamconfig = {
 };
 
 var maincam = webcam.create(maincamconfig);
-var body = 0;
 
-function intervalFunc() {
+//API Code Below
+function postpic(postdata) {
+
+	//Determine where Post is going
+		var options = {
+				hostname: "canadacentral.api.cognitive.microsoft.com",
+				path: "/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion",
+				method: "POST",
+				followRedirect: true,
+				headers:{
+					"Content-Type": "application/json",
+					"Ocp-Apim-Subscription-Key": apikey
+				}
+		};
+
+		var req = https.request(options, (res) => {
+		  console.log('statusCode:', res.statusCode);
+		  console.log('headers:', res.headers);
+
+		  res.on('data', (d) => {
+		    process.stdout.write(d);
+		  });
+		});
+
+		req.on('error', (e) => {
+		  console.error(e);
+		});
+
+		//execute the request
+		req.write(postdata);
+		req.end();
+
+}
+
+function snap() {
 	var time = new Date();
 	maincam.capture("temp_picture", function(err, data){
-			body = "<img src='" + data + "'><p>" + time + "</p>";
+			if(err) {
+				console.log('ERROR!!!!');
+			}
+			var body = "{'url': 'https://www.biography.com/.image/t_share/MTE1ODA0OTcxNTkzNzk1MDg1/sean-connery-9255144-1-402.jpg'}";
+			postpic(body)
 		});
 	console.log('Just snapped your photo!');
 }
 
-const server = http.createServer((req, res) => {
-	  res.statusCode = 200;
-	  res.setHeader('Content-Type', 'text/html');
-	  res.end(body);
-});
+snap();
 
-intervalFunc();
+setInterval(snap, 10000);
 
-server.listen(port, hostname, () => {
-	  console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-setInterval(intervalFunc, 10000);
+//TESTING CODE//
+console.log(apikey);
