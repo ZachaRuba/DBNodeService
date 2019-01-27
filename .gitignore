@@ -1,4 +1,4 @@
-.dotenv
+.env
 photos/
 node_modules/
 temp_picture.jpg

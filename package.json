@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/ZachaRuba/DBNodeService#readme",
   "dependencies": {
-    "node-webcam": "^0.4.6"
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "node-webcam": "^0.4.6",
+    "nodemon": "^1.18.9",
+    "package": "^1.0.1"
   }
 }

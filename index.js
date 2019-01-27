@@ -1,8 +1,14 @@
+
+require('dotenv').load();
 const http = require('http');
+const express = require('express');
 const webcam = require('node-webcam');
 
+
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = process.env.PORT || 3000;
+const apikey = process.env.APIKEY;
+const apiurl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize?";
 
 var maincamconfig = {
 	width:          1280,
@@ -17,18 +23,26 @@ var maincamconfig = {
 };
 
 var maincam = webcam.create(maincamconfig);
-var image;
+var body = 0;
 
+function intervalFunc() {
+	var time = new Date();
+	maincam.capture("temp_picture", function(err, data){
+			body = "<img src='" + data + "'><p>" + time + "</p>";
+		});
+	console.log('Just snapped your photo!');
+}
 
 const server = http.createServer((req, res) => {
 	  res.statusCode = 200;
 	  res.setHeader('Content-Type', 'text/html');
-	  maincam.capture("temp_picture", function(err, data){
-	      image = "<img src='" + data + "'>";
-          });
-	  res.end(image);
+	  res.end(body);
 });
+
+intervalFunc();
 
 server.listen(port, hostname, () => {
 	  console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+setInterval(intervalFunc, 10000);
