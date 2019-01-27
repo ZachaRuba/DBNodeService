@@ -74,7 +74,7 @@ function postemote(postdata){
 			method: "POST",
 			followRedirect: true,
 			headers:{
-				"Content-Type": "application/JSON",
+				"Content-Type": "text/plain",
 			}
 		}
 
@@ -84,10 +84,13 @@ function postemote(postdata){
 			});
 			var id = "{'userId':" +  `'${userid}'}`;
 			//execute the request
-			req.write(postdata);
-			console.log(postdata);
-			req.write(id);
-			console.log(id);
+			//req.write(postdata);
+			//console.log(postdata);
+			//req.write(id);
+			//console.log(id);
+			var body = JSON.stringify(postdata) + id;
+			req.write(body);
+			console.log(body);
 			req.end();
 };
 
